@@ -20,6 +20,27 @@ public class Main {
         int choice = scanner.nextInt();
         scanner.nextLine();
         if (choice == 1) {
+            System.out.println("----Sign in Page----");
+            System.out.print("Enter your card Number: ");
+            String signInCardNumber = scanner.nextLine().trim();
+            while (signInCardNumber.length() != 16 || !signInCardNumber.matches("[0-9]{16}")) {
+                System.out.print("Please enter valid card number: ");
+                signInCardNumber = scanner.nextLine();
+            }
+            System.out.print("Enter Your pin code: ");
+            String signInPin = scanner.nextLine().trim();
+            while (signInPin.length() != 4 || !signInPin.matches("[0-9]{4}")) {
+                System.out.print("Please enter valid pin: ");
+                signInPin = scanner.nextLine();
+            }
+            System.out.print("Enter Fin code: ");
+            String signInFin = scanner.nextLine().trim();
+            while (signInFin.length() != 7) {
+                System.out.print("Enter valid Fin code: ");
+                signInFin = scanner.nextLine().trim();
+            }
+
+            bankService.login(signInCardNumber, signInPin, signInFin);
 
         } else if (choice == 2) {
             System.out.println("----Sign up Menu----");
@@ -50,7 +71,7 @@ public class Main {
             }
 
 
-            bankService.registesCustomer(signUpFin,customerSignUpName,customerSignUpSurname,signUpPhone,signUpEmail,signUpPin);
+            bankService.registesCustomer(signUpFin, customerSignUpName, customerSignUpSurname, signUpPhone, signUpEmail, signUpPin);
 
 
         }

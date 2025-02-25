@@ -5,6 +5,7 @@ import org.bank.model.BankAccount;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Random;
 
@@ -51,4 +52,24 @@ public class AccountDAO {
 
     public record BankData(String cardNumber, String cvv) {
     }
+
+    //    Login
+    public boolean login(String card_number, String pin_code, String customer_id) {
+        String Sql = "SELECT * FROM accounts WHERE card_number=? AND pin_code=? AND customer_id=?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(Sql);
+
+        ) {
+            stmt.setString(1, card_number);
+            stmt.setString(2, pin_code);
+            stmt.setString(3, customer_id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
 }

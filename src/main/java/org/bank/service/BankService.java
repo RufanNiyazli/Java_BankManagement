@@ -31,4 +31,11 @@ public class BankService {
             System.out.println("Problem occurred while registering customer.");
         }
     }
+
+    public void login(String card_number, String pin_code, String customer_id) {
+        if (accountDAO.login(card_number, pin_code, customer_id)) {
+            System.out.println("You succesfully login...");
+
+        }
+    }
 }
