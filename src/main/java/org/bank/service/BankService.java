@@ -32,10 +32,13 @@ public class BankService {
         }
     }
 
-    public void login(String card_number, String pin_code, String customer_id) {
+    public boolean login(String card_number, String pin_code, String customer_id) {
         if (accountDAO.login(card_number, pin_code, customer_id)) {
             System.out.println("You succesfully login...");
-
+            return true;
+        } else {
+            System.out.println("Error occured");
+            return false;
         }
     }
 }

@@ -42,6 +42,25 @@ public class Main {
 
             bankService.login(signInCardNumber, signInPin, signInFin);
 
+            if (bankService.login(signInCardNumber, signInPin, signInFin)) {
+                System.out.println("Show balance-->1: Increase Balance-->2: Transfer-->3 ");
+                System.out.print("Your choice: ");
+                int btn = scanner.nextInt();
+                scanner.nextLine();
+                switch (btn){
+                    case 1:
+                        break;
+
+                    case 2:
+                        break;
+
+                    case 3:
+                        break;
+                }
+
+
+            }
+
         } else if (choice == 2) {
             System.out.println("----Sign up Menu----");
             System.out.print("Enter the name: ");
