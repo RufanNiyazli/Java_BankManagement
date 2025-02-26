@@ -72,4 +72,28 @@ public class AccountDAO {
 
     }
 
+    //    login show balanace
+    public double showBalanca(String card_number) {
+        String Sql = "SELECT * FROM accounts WHERE card_number =?";
+        double balance = 0;
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(Sql);
+        ) {
+            stmt.setString(1, card_number);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                balance = rs.getDouble("balance");
+                return balance;
+            } else {
+                return -1;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
+    }
+//
+
 }

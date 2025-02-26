@@ -41,4 +41,14 @@ public class BankService {
             return false;
         }
     }
+
+    //    login show balance
+    public void showBalance(String card_number) {
+        double balance = accountDAO.showBalanca(card_number);
+        if (balance != -1) {
+            System.out.println("Your balance: " + balance);
+        } else {
+            System.out.println("Balance is not find.");
+        }
+    }
 }
