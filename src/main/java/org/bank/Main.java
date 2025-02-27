@@ -47,11 +47,25 @@ public class Main {
                 System.out.print("Your choice: ");
                 int btn = scanner.nextInt();
                 scanner.nextLine();
-                switch (btn){
+                switch (btn) {
                     case 1:
+                        bankService.showBalance(signInCardNumber);
                         break;
 
                     case 2:
+                        System.out.println("Please write the card number and cvv from which you transfer money to yourself.");
+                        System.out.print("Card Number: ");
+                        String increaseBalanceCardNumber = scanner.nextLine().trim();
+                        while (increaseBalanceCardNumber.length() != 16 || !increaseBalanceCardNumber.matches("[0-9]{16}")) {
+                            System.out.print("Please enter valid card number: ");
+                            increaseBalanceCardNumber = scanner.nextLine();
+                        }
+                        System.out.print("Enter cvv: ");
+                        String increaseBalanceCvv = scanner.nextLine().trim();
+                        while (increaseBalanceCvv.length() != 3 || !increaseBalanceCvv.matches("[0-9]{3}")) {
+                            System.out.print("Please Enter valid cvv: ");
+                            increaseBalanceCvv = scanner.nextLine().trim();
+                        }
                         break;
 
                     case 3:

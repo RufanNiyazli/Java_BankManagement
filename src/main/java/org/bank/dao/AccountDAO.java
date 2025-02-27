@@ -90,10 +90,11 @@ public class AccountDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-
     }
-//
+
+    //          login increase
+    public void increaseBalance() {
+        String Sql = "";
+    }
 
 }
