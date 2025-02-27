@@ -93,8 +93,22 @@ public class AccountDAO {
     }
 
     //          login increase
-    public void increaseBalance() {
-        String Sql = "";
+    public void increaseBalance(String card_number, String cvv) {
+        String Sql = "SELECT * FROM accounts WHERE card_number=?  AND cvv=?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(Sql)
+        ) {
+            double balance = 0;
+            stmt.setString(1, card_number);
+            stmt.setString(2, cvv);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                balance = rs.getDouble("balance");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
