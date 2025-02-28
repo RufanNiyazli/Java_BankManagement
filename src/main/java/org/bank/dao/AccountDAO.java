@@ -16,9 +16,7 @@ public class AccountDAO {
         BankData result = generateNumberandCvv(); // Kart nömrəsi və CVV yaradılır
 
         BankAccount bankAccount = new BankAccount(customer_id, result.cardNumber(), result.cvv(), 0); // BankAccount obyektini yaradıq
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(Sql)
-        ) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(Sql)) {
             stmt.setString(1, result.cardNumber());
             stmt.setString(2, result.cvv());
             stmt.setString(3, pin_code);
@@ -56,8 +54,7 @@ public class AccountDAO {
     //    Login
     public boolean login(String card_number, String pin_code, String customer_id) {
         String Sql = "SELECT * FROM accounts WHERE card_number=? AND pin_code=? AND customer_id=?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(Sql);
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(Sql);
 
         ) {
             stmt.setString(1, card_number);
@@ -76,9 +73,7 @@ public class AccountDAO {
     public double showBalanca(String card_number) {
         String Sql = "SELECT * FROM accounts WHERE card_number =?";
         double balance = 0;
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(Sql);
-        ) {
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(Sql);) {
             stmt.setString(1, card_number);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -93,17 +88,24 @@ public class AccountDAO {
     }
 
     //          login increase
-    public void increaseBalance(String card_number, String cvv) {
-        String Sql = "SELECT * FROM accounts WHERE card_number=?  AND cvv=?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(Sql)
-        ) {
-            double balance = 0;
-            stmt.setString(1, card_number);
-            stmt.setString(2, cvv);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                balance = rs.getDouble("balance");
+    public void transfer(String card_number, double amount, String from_card_number) {
+        String withdrawSql = "UPDATE * FROM accounts SET balance=balance + ? WHERE card_number=?";
+        String depositSql = "UPDATE *FROM accounts SET balance =balance - ? WHERE card_number";
+
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement withdrawstmt = conn.prepareStatement(withdrawSql;
+                 PreparedStatement depositstmt = conn.prepareStatement(depositSql)
+            ) {
+                withdrawstmt.setDouble(1, amount);
+                withdrawstmt.setString(2, card_number);
+                int depositResult = withdrawstmt.executeUpdate();
+                if (depositResult > 0) {
+                    depositstmt.setString(2, from_card_number);
+                    depositstmt.setDouble(1, amount);
+
+                }
             }
 
         } catch (SQLException e) {
@@ -111,15 +113,34 @@ public class AccountDAO {
         }
     }
 
-    public void updateBalance(String card_number, double balance) {
-        String Sql = "UPDATE accounts SET balance = ? WHERE card_number = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(Sql)
-        ) {
-            stmt.setString(1, card_number);
-            stmt.setDouble(2,balance);
+    public boolean checkBalance(String from_card, double transfer_money) {
+        String Sql = "Select * FROM accounts WHERE card_number=?";
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(Sql)) {
+            stmt.setString(1, from_card);
+            double from_balance = 0;
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    from_balance = Double.parseDouble(rs.getString("balance"));
+                }
+                if (from_balance > transfer_money) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
     }
+
+//    public void updateBalance(String card_number, double balance) {
+//        String Sql = "UPDATE accounts SET balance = ? WHERE card_number = ?";
+//        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(Sql)) {
+//            stmt.setString(1, card_number);
+//            stmt.setDouble(2, balance);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }
