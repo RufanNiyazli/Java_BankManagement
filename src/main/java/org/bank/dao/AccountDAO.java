@@ -111,4 +111,15 @@ public class AccountDAO {
         }
     }
 
+    public void updateBalance(String card_number, double balance) {
+        String Sql = "UPDATE accounts SET balance = ? WHERE card_number = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(Sql)
+        ) {
+            stmt.setString(1, card_number);
+            stmt.setDouble(2,balance);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
