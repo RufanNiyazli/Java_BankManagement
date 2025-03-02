@@ -51,4 +51,13 @@ public class BankService {
             System.out.println("Balance is not find.");
         }
     }
+
+    public void transferMoney(String from_card_number, String to_card_number, double amount) {
+        if (accountDAO.checkBalance(from_card_number, amount)) {
+            accountDAO.transfer(to_card_number, amount, from_card_number);
+        }else{
+            System.out.println("there is not much money");
+        }
+
+    }
 }

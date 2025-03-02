@@ -62,6 +62,7 @@ public class Main {
                         }
                         System.out.print("How much do you want to send: ");
                         double transferMoney = scanner.nextDouble();
+                        bankService.transferMoney(signInCardNumber, transferAccount, transferMoney);
                         break;
 
                     case 3:

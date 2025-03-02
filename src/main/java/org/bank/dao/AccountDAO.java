@@ -88,30 +88,52 @@ public class AccountDAO {
     }
 
     //          login increase
-    public void transfer(String card_number, double amount, String from_card_number) {
-        String withdrawSql = "UPDATE * FROM accounts SET balance=balance + ? WHERE card_number=?";
-        String depositSql = "UPDATE *FROM accounts SET balance =balance - ? WHERE card_number";
-
+    public void transfer(String to_card_number, double amount, String from_card_number) {
+        String withdrawSql = "UPDATE accounts SET balance = balance - ? WHERE card_number = ?";
+        String depositSql = "UPDATE accounts SET balance = balance + ? WHERE card_number = ?";
 
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
-            try (PreparedStatement withdrawstmt = conn.prepareStatement(withdrawSql;
-                 PreparedStatement depositstmt = conn.prepareStatement(depositSql)
-            ) {
+
+            try (PreparedStatement withdrawstmt = conn.prepareStatement(withdrawSql);
+                 PreparedStatement depositstmt = conn.prepareStatement(depositSql)) {
+
+
                 withdrawstmt.setDouble(1, amount);
-                withdrawstmt.setString(2, card_number);
-                int depositResult = withdrawstmt.executeUpdate();
-                if (depositResult > 0) {
-                    depositstmt.setString(2, from_card_number);
-                    depositstmt.setDouble(1, amount);
+                withdrawstmt.setString(2, from_card_number);
+                int withdrawResult = withdrawstmt.executeUpdate();
 
+                if (withdrawResult == 0) {
+                    conn.rollback();
+                    System.out.println("Unsuccessful: Withdrawal failed.");
+                    return;
                 }
-            }
 
+
+                depositstmt.setDouble(1, amount);
+                depositstmt.setString(2, to_card_number);
+                int depositResult = depositstmt.executeUpdate();
+
+                if (depositResult == 0) {
+                    conn.rollback();
+                    System.out.println("Unsuccessful: Deposit failed.");
+                    return;
+                }
+
+                conn.commit();
+                System.out.println("Transfer successful.");
+
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new RuntimeException("Transaction failed. Rolled back.", e);
+            } finally {
+                conn.setAutoCommit(true);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Database error", e);
         }
     }
+
 
     public boolean checkBalance(String from_card, double transfer_money) {
         String Sql = "Select * FROM accounts WHERE card_number=?";
