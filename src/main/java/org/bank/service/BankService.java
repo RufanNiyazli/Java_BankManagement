@@ -2,15 +2,18 @@ package org.bank.service;
 
 import org.bank.dao.AccountDAO;
 import org.bank.dao.CustomerDAO;
+import org.bank.dao.TransactionDAO;
 import org.bank.model.BankAccount;
 
 public class BankService {
     private final CustomerDAO customerDAO;
     private final AccountDAO accountDAO;
+    private final TransactionDAO transactionDAO;
 
-    public BankService(CustomerDAO customerDAO, AccountDAO accountDAO) {
+    public BankService(CustomerDAO customerDAO, AccountDAO accountDAO, TransactionDAO transactionDAO) {
         this.customerDAO = customerDAO;
         this.accountDAO = accountDAO;
+        this.transactionDAO = transactionDAO;
     }
 
     public void registesCustomer(String id, String name, String surname, String phone, String email, String pin_code) {
@@ -55,9 +58,18 @@ public class BankService {
     public void transferMoney(String from_card_number, String to_card_number, double amount) {
         if (accountDAO.checkBalance(from_card_number, amount)) {
             accountDAO.transfer(to_card_number, amount, from_card_number);
-        }else{
+        } else {
             System.out.println("there is not much money");
         }
 
+    }
+//    transfer cedveli yazmaq
+
+    public void transferSheet(String receiver_account_id, String sender_account_id, double amount) {
+        if (transactionDAO.transferMoney(receiver_account_id, sender_account_id, amount)) {
+            System.out.println("Succesfullly write on the shhet");
+        } else {
+            System.out.println("problem occur");
+        }
     }
 }

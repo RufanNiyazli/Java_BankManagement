@@ -2,6 +2,7 @@ package org.bank;
 
 import org.bank.dao.AccountDAO;
 import org.bank.dao.CustomerDAO;
+import org.bank.dao.TransactionDAO;
 import org.bank.service.BankService;
 
 import java.sql.SQLOutput;
@@ -11,7 +12,8 @@ public class Main {
     public static void main(String[] args) {
         CustomerDAO customerDAO = new CustomerDAO();
         AccountDAO accountDAO = new AccountDAO();
-        BankService bankService = new BankService(customerDAO, accountDAO);
+        TransactionDAO transactionDAO = new TransactionDAO();
+        BankService bankService = new BankService(customerDAO, accountDAO, transactionDAO);
 
         System.out.println("Welcome,Sir.");
         Scanner scanner = new Scanner(System.in);
@@ -63,6 +65,7 @@ public class Main {
                         System.out.print("How much do you want to send: ");
                         double transferMoney = scanner.nextDouble();
                         bankService.transferMoney(signInCardNumber, transferAccount, transferMoney);
+                        bankService.transferSheet(transferAccount, signInCardNumber, transferMoney);
                         break;
 
                     case 3:
